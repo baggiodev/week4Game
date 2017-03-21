@@ -7,16 +7,20 @@
     .pictures {
     height: 200px;
     width:200px;
+    border:10px solid black;
+    margin-right: 5px;
     }
     </style>
   </head>
   <body>
-    <h1>Pick a character <span id="number-to-guess"></span></h1>
-    <div class="container">
+    <h1 id="title">Pick a character </h1>
+    <div class="container" id="playerpick">
       <div class="row">
         <div id="player">
         </div>
       </div>
+    </div>
+    <div class="container" id="content">
       <div class="row">
         <div class="col-md-3">
           <div id="userpicked">
@@ -29,6 +33,8 @@
         </div>
         <div class="col-md-2">
           <button id="fightbutton">Fight</button>
+          <div id="dmg">
+          </div>
         </div>
         <div class="col-md-3 ">
           <div id="compPicked">

@@ -40,10 +40,14 @@ var computerhealth;
 var computerattack;
 var computerarmor;
 var userpicked = 0;
+var userdmg = 0;
+var computerdmg = 0;
+var userlevel = 0;
 var array = [spike, faye, ed, jet, vicious];
 
 function writecomp() {
     $("#compstats").html("Health: " + computerhealth + "<br>" + "Armor: " + computerarmor + "<br>" + "Attack: " + computerattack);
+    $("#dmg").html("User damage: " + userdmg + "<br>" + "Computer damage: " + computerdmg);
 }
 
 function writeuser() {
@@ -69,17 +73,19 @@ $(document).ready(function() {
     $(".characters").on("click", function() {
         if (userpicked === 0) {
             userhealth = ($(this).attr("data-health"));
-            userhealth = parseInt(userhealth * 2);
+            userhealth = parseInt(userhealth * 1.5);
             userattack = ($(this).attr("data-attack"));
-            userattack = parseInt(userattack * 2);
+            userattack = parseInt(userattack * 1.5);
             userarmor = ($(this).attr("data-armor"));
-            userarmor = parseInt(userarmor * 2);
+            userarmor = parseInt(userarmor * 1.5);
             ($(this).attr("id", "useravatar"));
             ($(this).attr("data-picked", "yes"));
             ($(this).appendTo("#userpicked"));
             $("#userpicked").show();
+            $("#userpicked").hide();
             userpicked++;
             writeuser();
+            $("#title").html("<h1>Pick who to fight!");
         } else if (userpicked === 1) {
             computerhealth = ($(this).attr("data-health"));
             computerhealth = parseInt(computerhealth);
@@ -95,29 +101,51 @@ $(document).ready(function() {
             userpicked++;
             $("#fightbutton").show();
             $("#compstats").show();
+            $("dmg").show();
             writecomp();
+            $("#userpicked").show();
+            $("#beaten").show();
+            $("#title").html("<h1>FIGHT!</h1>");
         }
     });
     $("#fightbutton").on("click", function() {
 
         if (userpicked === 2) {
             // user attack
-            computerhealth = computerhealth - (Math.floor(Math.random() * 20) + userattack - computerarmor);
+            userdmg = Math.floor(Math.random() * 20) + userattack - computerarmor;
+            computerhealth = computerhealth - userdmg;
             // computer attack
-            userhealth = userhealth - (Math.floor(Math.random() * 20) + computerattack - userarmor);
+            computerdmg = Math.floor(Math.random() * 20) + computerattack - userarmor;
+            userhealth = userhealth - (computerdmg);
+            $("#dmg").show();
             if (userhealth <= 0) {
-                console.log("you lose");
+                $("#computeravatar").appendTo("#player");
+                $("#content").html("<h1>You lost!");
+                $("#title").html("Sorry");
                 userpicked = 10;
             } else if (computerhealth <= 0) {
-                console.log("you win")
-                    // hide button,show picture div, set userpicked to 1
+                userlevel++;
+                // hide button,show picture div, set userpicked to 1
+                $("#dmg").hide();
                 $("#fightbutton").hide();
                 $("#compstats").hide();
                 $("#player").show();
-                userpicked = 1
-                    // move current div to beaten, check if last in array
+                userpicked = 1;
+                // move current div to beaten, check if last in array
                 $("#beaten").show();
                 $("#computeravatar").appendTo("#beaten");
+                userattack = userattack + userlevel;
+                userarmor = userarmor + userlevel;
+                userhealth = userhealth + 10;
+                $("#userpicked").hide();
+                $("#beaten").hide();
+                $("#title").html("<h1>Pick who to fight!");
+                if (userlevel === (array.length - 1)) {
+                    $("#useravatar").appendTo("#player");
+                    $("#content").html('<h1>You won!</h1>');
+                    $("#title").html("Congratulations");
+                    userpicked++;
+                }
             }
         }
         writecomp();
