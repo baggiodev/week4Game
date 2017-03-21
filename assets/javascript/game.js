@@ -8,8 +8,8 @@ var spike = {
 var faye = {
     name: "Faye Valentine",
     health: 80,
-    attack: 7,
-    armor: 7,
+    attack: 6,
+    armor: 5,
     image: "assets/images/faye.png"
 };
 var ed = {
@@ -33,8 +33,27 @@ var vicious = {
     armor: 3,
     image: "assets/images/vicious.png"
 };
-var userpicked = false;
+var userhealth;
+var userattack;
+var userarmor;
+var computerhealth;
+var computerattack;
+var computerarmor;
+var userpicked = 0;
 var array = [spike, faye, ed, jet, vicious];
+
+function writecomp() {
+    $("#compstats").html("Health: " + computerhealth + "<br>" + "Armor: " + computerarmor + "<br>" + "Attack: " + computerattack);
+}
+
+function writeuser() {
+    $("#userstats").html("Health: " + userhealth + "<br>" + "Armor: " + userarmor + "<br>" + "Attack: " + userattack);
+
+}
+$("#fightbutton").hide();
+$("#userpicked").hide();
+$("#compPicked").hide();
+$("#beaten").hide();
 $(document).ready(function() {
     for (var i = 0; i < array.length; i++) {
         var characterBtn = $("<img>");
@@ -48,29 +67,61 @@ $(document).ready(function() {
         $("#player").append(characterBtn);
     }
     $(".characters").on("click", function() {
-        if (userpicked === false) {
-            var userhealth = ($(this).attr("data-health"));
-            userhealth = parseInt(userhealth);
-            var userattack = ($(this).attr("data-attack"));
-            userattack = parseInt(userattack);
-            var userarmor = ($(this).attr("data-armor"));
-            userarmor = parseInt(userarmor);
+        if (userpicked === 0) {
+            userhealth = ($(this).attr("data-health"));
+            userhealth = parseInt(userhealth * 2);
+            userattack = ($(this).attr("data-attack"));
+            userattack = parseInt(userattack * 2);
+            userarmor = ($(this).attr("data-armor"));
+            userarmor = parseInt(userarmor * 2);
             ($(this).attr("id", "useravatar"));
             ($(this).attr("data-picked", "yes"));
             ($(this).appendTo("#userpicked"));
-            userpicked = true;
-        } else if (userpicked) {
-            var computerhealth = ($(this).attr("data-health"));
+            $("#userpicked").show();
+            userpicked++;
+            writeuser();
+        } else if (userpicked === 1) {
+            computerhealth = ($(this).attr("data-health"));
             computerhealth = parseInt(computerhealth);
-            var computerattack = ($(this).attr("data-attack"));
+            computerattack = ($(this).attr("data-attack"));
             computerattack = parseInt(computerattack);
-            var computerarmor = ($(this).attr("data-armor"));
+            computerarmor = ($(this).attr("data-armor"));
             computerarmor = parseInt(computerarmor);
             ($(this).attr("id", "computeravatar"));
             ($(this).attr("data-picked", "yes"));
             ($(this).appendTo("#compPicked"));
-            var test = $(".characters"[data-picked="yes"]);
-            test.hide();
+            $("#compPicked").show();
+            $("#player").hide();
+            userpicked++;
+            $("#fightbutton").show();
+            $("#compstats").show();
+            writecomp();
         }
     });
+    $("#fightbutton").on("click", function() {
+
+        if (userpicked === 2) {
+            // user attack
+            computerhealth = computerhealth - (Math.floor(Math.random() * 20) + userattack - computerarmor);
+            // computer attack
+            userhealth = userhealth - (Math.floor(Math.random() * 20) + computerattack - userarmor);
+            if (userhealth <= 0) {
+                console.log("you lose");
+                userpicked = 10;
+            } else if (computerhealth <= 0) {
+                console.log("you win")
+                    // hide button,show picture div, set userpicked to 1
+                $("#fightbutton").hide();
+                $("#compstats").hide();
+                $("#player").show();
+                userpicked = 1
+                    // move current div to beaten, check if last in array
+                $("#beaten").show();
+                $("#computeravatar").appendTo("#beaten");
+            }
+        }
+        writecomp();
+        writeuser();
+    });
+
 });
