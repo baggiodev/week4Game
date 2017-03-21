@@ -113,9 +113,15 @@ $(document).ready(function() {
         if (userpicked === 2) {
             // user attack
             userdmg = Math.floor(Math.random() * 20) + userattack - computerarmor;
+            if (userdmg<0){
+                userdmg=0;
+            }
             computerhealth = computerhealth - userdmg;
             // computer attack
             computerdmg = Math.floor(Math.random() * 20) + computerattack - userarmor;
+            if(computerdmg<0){
+                computerdmg=0;
+            }
             userhealth = userhealth - (computerdmg);
             $("#dmg").show();
             if (userhealth <= 0) {
